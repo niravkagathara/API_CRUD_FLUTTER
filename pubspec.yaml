@@ -89,3 +89,243 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+#
+#  // import 'package:demo2/User_list.dart';
+#  import 'package:api/apicode.dart';
+#  import 'package:api/apiuser_list.dart';
+#  import 'package:api/model.dart';
+#  import 'package:flutter/cupertino.dart';
+#  import 'package:flutter/material.dart';
+#
+#  // import 'database/my_database.dart';
+#
+#  class DataEntry extends StatefulWidget {
+#  Map<String,dynamic>? map;
+#  DataEntry(map){
+#  this.map = map;
+#}
+#
+#  @override
+#  State<DataEntry> createState() => _DataEntryState();
+#}
+#
+#  class _DataEntryState extends State<DataEntry> {
+#  var nameController = TextEditingController();
+#  void initState(){
+#  nameController.text=widget.map==null?'':widget.map!["name"].toString();
+#
+#}
+#  @override
+#  Widget build(BuildContext context) {
+#  return SafeArea(
+#child: Scaffold(
+#  appBar: AppBar(title: Text("add data")),
+#  body: SafeArea(
+#    child: Card(
+#      child: Column(
+#        children: [
+#          Container(
+#          child: TextFormField(
+#            controller: nameController,
+#          decoration: InputDecoration(hintText: "Enter User Name"),
+#          ),
+#          ),
+#          Center(
+#          child: Container(
+#            child: ElevatedButton(
+#              onPressed: () async {
+#                                    // Insertapi()
+#                                    //     .then((value) => Navigator.of(context).pop(true))
+#                                    //     .then(
+#                                    //   (value) {
+#                //     return UserListAPI();
+#                //   },
+#                                    // );
+#                                    if(widget.map==null){
+#                await Insertapi().then((value) => Navigator.of(context).pop(true));
+#              }
+#                                    else{
+#                await editUser(widget.map!["id"].toString()).then((value) => Navigator.of(context).pop(true));
+#              }
+#              },
+#          child: Text("Submit"),
+#          ),
+#          ),
+#          )
+#        ],
+#      ),
+#    ),
+#  ),
+#  ),
+#  );
+#}
+#
+#  // Future<void> insertDB() async {
+#  //   Map<String, dynamic> map = Map<String,dynamic>();
+#  //   // map["name"] = nameController.text;
+#  //   // map["Name"];
+#  //   // model model= model();
+#  //   await APICode().InsertUser(map);
+#  // }
+#  // Future<int> editUser(id) async {
+#  //   Map<String, Object?> map = Map<String, Object?>();
+#  //   map["Name"]=nameController.text;
+#  //   // map["CityId"]=cityIdController.text;
+#  //
+#  //   var res = await MyDatabase().editUser(map, id);
+#  //   return res;
+#  // }
+#  Future<void> Insertapi() async {
+#  model model1=model();
+#  // Map<String, dynamic> map = {};
+#
+#  // map["name"]=nameController.text;
+#  model1.name =nameController.text;
+#  Map<String, dynamic> map =model1.convert();
+#
+#  await APICode().InsertUser(map);
+#}
+#  Future<void> editUser(id) async{
+#  model model1=model();
+#
+#  model1.name =nameController.text;
+#  Map<String, dynamic> map =model1.convert();
+#
+#  await APICode().editUser(map, id);
+#// var response1 = http.put(Uri.parse("https://632158b682f8687273afe9c3.mockapi.io/EmployeeDetails/"+widget.map['id'].toString(),),body: map);
+#}
+#}
+#
+#  class model{
+#  String _name="";
+#
+#  String get name => _name;
+#
+#  set name(String value) {
+#  _name = value;
+#}
+#  Map<String,dynamic> convert(){
+#
+#  return {
+#"name":_name
+#};
+#}
+#}
+#
+#  import 'package:api/Dats_Entry.dart';
+#
+#  import 'apicode.dart';
+#  import 'package:flutter/cupertino.dart';
+#  import 'package:flutter/material.dart';
+#
+#  class UserListAPI extends StatefulWidget {
+#  const UserListAPI({super.key});
+#
+#  @override
+#  State<UserListAPI> createState() => _UserListAPIState();
+#}
+#
+#  class _UserListAPIState extends State<UserListAPI> {
+#  @override
+#  Widget build(BuildContext context) {
+#  return Scaffold(
+#floatingActionButton: FloatingActionButton(
+#  child: Icon(Icons.add),
+#  backgroundColor: Colors.white70,
+#  onPressed: () {
+#    Navigator.of(context).push(
+#    MaterialPageRoute(
+#    builder: (context) {
+#      return DataEntry(null);
+#      // return DataEntry(null);
+#      // return EnterDetail(Detail: null,);
+#  },
+#    ),
+#    ).then((value){
+#    if(value==true){
+#    setState(() {
+#
+#  });
+#  }
+#  } );
+#},
+#  ),
+#floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+#appBar: AppBar(title: Text("data")),
+#body: FutureBuilder(
+#  future: APICode().getdetail(),
+#  builder: (context, snapshot) {
+#    if (snapshot.hasData) {
+#    return ListView.builder(
+#    itemCount: snapshot.data!.length,
+#    itemBuilder: (context, index) {
+#      return Card(
+#      color: Colors.teal,
+#      child: Row(
+#        children: [
+#          Expanded(child: Text(snapshot.data![index]["name"],style: TextStyle(color: Colors.white) ,selectionColor: Colors.white,)),
+#          IconButton(onPressed: () async {
+#                                           await APICode().deletRecord(snapshot.data![index]["id"]).then((value) {setState(() {});});
+#
+#          }, icon: Icon(Icons.delete)),
+#          Container(
+#          padding: EdgeInsets.only(right: 20),
+#          child: InkWell(
+#            onTap: () {
+#                        Navigator.of(context).push(MaterialPageRoute(
+#              builder: (context) {
+#                                   return DataEntry(snapshot.data![index]);
+#              },
+#                        )).then((value) {
+#
+#              setState(() {
+#
+#            });
+#
+#
+#            },);
+#            },
+#          child: Icon(Icons.edit),
+#          ),
+#          ),
+#        ]
+#      ),
+#      );
+#  },
+#    );
+#  } else {
+#    return CircularProgressIndicator();
+#  }
+#    // return CircularProgressIndicator();
+#},
+#  ),
+#  );
+#}
+#}
+#
+#
+#
+#  import 'dart:convert';
+#
+#  import 'package:http/http.dart' as http;
+#
+#  class APICode{
+#  Future<List> getdetail() async {
+#  var res= await http.get(Uri.parse("https://64e8603a99cf45b15fdf77ff.mockapi.io/faculty"));
+#  List userList= jsonDecode(res.body);
+#  return userList;
+#}
+#  Future<void> deletRecord(String id) async {
+#  var res= await http.delete(Uri.parse("https://64e8603a99cf45b15fdf77ff.mockapi.io/faculty/"+id));
+#
+#}
+#
+#  Future<void> InsertUser(Map<String,dynamic> map) async{
+#await http.post(Uri.parse("https://64e8603a99cf45b15fdf77ff.mockapi.io/faculty"),body: map);
+#}
+#  Future<void> editUser(Map<String,dynamic> map,String id)async{
+#await http.put(Uri.parse("https://64e8603a99cf45b15fdf77ff.mockapi.io/faculty/"+id),body: map);
+#// var response1 = http.put(Uri.parse("https://632158b682f8687273afe9c3.mockapi.io/EmployeeDetails/"+widget.map['id'].toString(),),body: map);
+#
+#}
+}
